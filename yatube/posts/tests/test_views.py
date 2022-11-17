@@ -1,6 +1,5 @@
 import shutil
 import tempfile
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -244,23 +243,17 @@ class PostURLTests(TestCase):
     def test_user_can_subscribe_other_users(self) -> None:
         '''Авторизованный пользователь может подписываться
            на других пользователей'''
-        ONE_MORE_FOLLOWER = 1
-        post_data = {
-            'author': self.user_following,
-            'user': self.user,
-        }
-        response = self.authorized_client.post(
-            reverse('posts:profile_follow', args=[self.user_following]),
-            data=post_data,
-            follow=True,
+        posts = Post.objects.filter(author__following__user=self.user).all()
+        self.authorized_client.get(
+            reverse('posts:profile_follow', args=[self.user_following])
         )
-        self.assertRedirects(
-            response, reverse('posts:profile', args=[self.user_following])
-        )
-        self.assertEqual(
-            Follow.objects.count(),
-            self.followers_count + ONE_MORE_FOLLOWER
-        )
+        response = self.authorized_client.post('posts:follow')
+
+        for post in posts:
+            self.assertEqual(
+                response.context.get('post'),
+                post
+            )
 
     def test_user_can_delete_other_users_from_following_users(self) -> None:
         '''Авторизованный пользователь может отписываться
