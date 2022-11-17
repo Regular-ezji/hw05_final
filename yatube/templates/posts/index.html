@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}
+  Главная страница
+{% endblock %}
+{% block content %}
+  {% include 'posts/includes/switcher.html' %}
+  <!-- класс py-5 создает отступы сверху и снизу блока -->
+  <div class="container py-5">     
+    {% for post in page_obj %}
+      {% include 'posts/includes/post.html' %}
+    {% endfor %}
+    {% include 'posts/includes/paginator.html' %} 
+  </div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}
+  Посты группы {{ group.title }}
+{% endblock %}
+{% block content %}
+  <h1>{{ group.title }}</h1>
+  <p>
+    {{ group.description }}
+  </p>
+  <div class="container py-5">
+    {% for post in page_obj %}
+      {% include 'posts/includes/post.html' %}
+    {% endfor %}
+    
+  </div>
+  {% include 'posts/includes/paginator.html' %} 
+{% endblock %}
