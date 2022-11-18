@@ -80,6 +80,11 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
+    class Meta:
+        models.UniqueConstraint(
+            fields=['user', 'author'],
+            name='author_and_user_unique'
+        )
     user = models.ForeignKey(
         User,
         blank=True,

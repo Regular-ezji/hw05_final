@@ -39,7 +39,7 @@ def profile(request, username):
         ).exists
     template = 'posts/profile.html'
     page_obj = paginator(request=request, posts=author.posts.all())
-    posts = Post.objects.all().filter(author__username=username)
+    posts = author.posts.all()
     count = posts.count()
     context = {
         'page_obj': page_obj,
@@ -116,7 +116,6 @@ def access_denied(request):
 def add_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     form = CommentForm(request.POST or None)
-    print(123)
     if form.is_valid():
         comment = form.save(commit=False)
         comment.author = request.user

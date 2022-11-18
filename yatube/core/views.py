@@ -11,6 +11,6 @@ def permission_denied_view(request, exception):
     return render(request, template, {'path': request.path}, status=403)
 
 
-def internal_server_error(request, exception):
+def internal_server_error(request):
     template = 'core/500.html'
     return render(request, template, {'path': request.path}, status=403)

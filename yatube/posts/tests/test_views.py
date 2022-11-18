@@ -70,7 +70,7 @@ class PostURLTests(TestCase):
     def setUp(self) -> None:
         self.guest_client = Client()
 
-    def asserts_with_first_obj(self, first_object):
+    def asserts_with_first_obj(self, first_object) -> None:
         '''Тестирование первого объекта (поста)
            на странице'''
         post_text_0 = first_object.text
