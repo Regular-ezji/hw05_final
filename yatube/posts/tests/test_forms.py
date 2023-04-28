@@ -48,6 +48,7 @@ class PostFormTests(TestCase):
         )
         cls.form = PostForm()
         cls.posts_count = Post.objects.count()
+        cls.ONE_MORE_OBJECT = 1
 
     @classmethod
     def tearDownClass(cls):
@@ -59,7 +60,7 @@ class PostFormTests(TestCase):
 
     def test_create_post(self) -> None:
         '''Тест формы создания поста'''
-        ONE_MORE_POST = 1
+        self.ONE_MORE_OBJECT = 1
         form_data = {
             'text': 'Тестовый пост',
             'group': self.group.id,
@@ -74,7 +75,7 @@ class PostFormTests(TestCase):
             response, reverse('posts:profile', args=[self.user])
         )
         self.assertEqual(
-            Post.objects.count(), self.posts_count + ONE_MORE_POST
+            Post.objects.count(), self.posts_count + self.ONE_MORE_OBJECT
         )
         self.assertEqual(
             response.context.get('post').author, self.post.author
@@ -124,7 +125,7 @@ class PostFormTests(TestCase):
             author=self.user
         )
         self.comments_count = Comment.objects.count()
-        ONE_MORE_COMMENT = 1
+        self.ONE_MORE_OBJECT = 1
         form_data = {
             'text': 'Тестовый комментарий'
         }
@@ -137,5 +138,5 @@ class PostFormTests(TestCase):
             response, reverse('posts:post_detail', args=[self.post.pk])
         )
         self.assertEqual(
-            Comment.objects.count(), self.comments_count + ONE_MORE_COMMENT
+            Comment.objects.count(), self.comments_count + self.ONE_MORE_OBJECT
         )

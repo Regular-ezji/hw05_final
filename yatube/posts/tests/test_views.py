@@ -60,6 +60,7 @@ class PostURLTests(TestCase):
             user=cls.user,
         )
         cls.followers_count = Follow.objects.count()
+        cls.ONE_LESS_FOLLOWER = 1
 
     @classmethod
     def tearDownClass(cls):
@@ -84,6 +85,7 @@ class PostURLTests(TestCase):
         for value, expected in page_obj_context_elements.items():
             with self.subTest(value=value):
                 return self.assertEqual(value, expected)
+        return None
 
     def test_urls_uses_correct_template(self) -> None:
         """URL-адрес использует соответствующий шаблон."""
@@ -217,6 +219,8 @@ class PostURLTests(TestCase):
 
     def test_cache(self) -> None:
         '''Проверка работы кэша'''
+        response = self.authorized_client.get(reverse('posts:index'))
+        posts = response.content
         cache_test_post = Post.objects.create(
             text='Тестовый пост для проверки кэша',
             author=self.user,
@@ -226,6 +230,7 @@ class PostURLTests(TestCase):
         )
         cache_test_post.delete()
         posts_before_cache_clear = response_before.content
+        self.assertEqual(posts, posts_before_cache_clear)
         cache.clear()
         response_after = self.authorized_client.get(
             reverse('posts:index')
@@ -258,7 +263,7 @@ class PostURLTests(TestCase):
     def test_user_can_delete_other_users_from_following_users(self) -> None:
         '''Авторизованный пользователь может отписываться
            от других пользователей'''
-        ONE_LESS_FOLLOWER = 1
+        self.ONE_LESS_FOLLOWER = 1
         response = self.authorized_client.post(
             reverse('posts:profile_unfollow', args=[self.user_following])
         )
@@ -266,7 +271,8 @@ class PostURLTests(TestCase):
             response, reverse('posts:profile', args=[self.user_following])
         )
         self.assertEqual(
-            Follow.objects.count(), self.followers_count - ONE_LESS_FOLLOWER
+            Follow.objects.count(),
+            self.followers_count - self.ONE_LESS_FOLLOWER
         )
 
     def test_post_appears_on_following_page(self) -> None:
